@@ -14,14 +14,14 @@ public class BallsManager {
         int x = (int)(Math.random()*200);
         int y = (int)(Math.random()*200);
 
-        balls.add(new Ball(x, y, 30, 30, 15,
+        balls.add(new Ball(x, y, 3, 3, 15,
                 new Color(255, 255, 255)
        ));
     }
 
     public void step(Graphics g) {
         for (Ball ball : balls) {
-            ball.bounce(arena);
+            ball.bounceButCool(arena, balls);
             ball.step();
             ball.render(g);
         }

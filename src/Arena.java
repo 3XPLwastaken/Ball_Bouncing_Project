@@ -31,7 +31,7 @@ public class Arena extends JPanel {
 
         //System.in.wait(1000);
         try {
-            Thread.sleep(100);
+            Thread.sleep(1);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

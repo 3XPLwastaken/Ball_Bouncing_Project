@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Ball {
     private int x;
@@ -74,10 +75,10 @@ public class Ball {
         x += xSpeed;
         y += ySpeed;
 
-        ySpeed += 1; // gravity
+        //ySpeed += 1; // gravity
     }
 
-    public void bounce(Arena arena) {
+    public void bounce(Arena arena, ArrayList<Ball> ballsArray) {
         //System.out.println(x-size + " >= " + arena.getWidth());
         if (x+size >= arena.getWidth() || x <= 0) {
             xSpeed *= -1;
@@ -89,25 +90,34 @@ public class Ball {
         }
     }
 
+    public double magnitude(Ball ball1, Ball ball2) {
+        int x = Math.abs(ball1.x - ball2.x);
+        int y = Math.abs(ball1.y - ball2.y);
 
-    public void bounceButCool(Arena arena) {
+        //
+        return Math.sqrt((x^2) - (y^2));
+    }
+
+    public void bounceButCool(Arena arena, ArrayList<Ball> ballsArray) {
+        //check positions of other balls
+
+
         //System.out.println(x-size + " >= " + arena.getWidth());
-        if (x+size >= arena.getWidth()) {
-            x = arena.getWidth();
+        if (x-size >= arena.getWidth()) {
+            x = arena.getWidth()-size;
             xSpeed *= -1;
         } else if (x <= 0) {
             x = 0;
             xSpeed *= -1;
         }
 
-        if (y+size >= arena.getHeight()) {
-            y = arena.getHeight();
+        if (y-size >= arena.getHeight()) {
+            y = arena.getHeight()-size;
             ySpeed *= -1;
-            ySpeed /= 2;
         } else if (y <= 0) {
             y = 0;
             ySpeed *= -1;
-            ySpeed /= 2;
+            //ySpeed /= 2;
         }
     }
 }
