@@ -14,7 +14,7 @@ public class BallsManager {
         int x = (int)(Math.random()*200);
         int y = (int)(Math.random()*200);
 
-        balls.add(new Ball(x, y, 1, 1, 15,
+        balls.add(new Ball(x, y, Math.random(), Math.random(), 15,
                 new Color(255, 255, 255)
        ));
     }

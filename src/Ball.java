@@ -77,6 +77,12 @@ public class Ball {
     public void render(Graphics g) {
         g.setColor(color);
         g.fillOval((int)x, (int)y, (int)size, (int)size);
+
+        // will toggle on and off when needed for debugging
+        if (true) {
+            g.setColor(new Color(255,0,0));
+            g.fillRect((int) (mX), (int) (mY), 1, 1);
+        }
     }
 
     public void step() {
@@ -105,8 +111,11 @@ public class Ball {
         int x = (int)Math.abs(ball1.mX - ball2.mX);
         int y = (int)Math.abs(ball1.mY - ball2.mY);
 
+        System.out.println(Math.sqrt((x^2) + (y^2)));
+        //System.out.println(y);
+
         //
-        return Math.sqrt((x^2) - (y^2));
+        return Math.sqrt((x^2) + (y^2));
     }
 
     public void bounceButCool(Arena arena, ArrayList<Ball> ballsArray) {
@@ -117,10 +126,10 @@ public class Ball {
             }
 
             // divide the size in half for accurate checking
-            System.out.println(magnitude(this, ball));
-            if (magnitude(this, ball) >= (double) size /2) {
-                xSpeed = 0;
-                ySpeed = 0;
+            //System.out.println(magnitude(this, ball));
+            if (magnitude(this, ball) < size/4) {
+                xSpeed *= (ball.mX - mX)/(ball.mY - mY);
+                ySpeed *= (ball.mY - mY)/(ball.mX - mX);
             }
         }
 
