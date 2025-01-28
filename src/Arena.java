@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
+//yadayada
 public class Arena extends JPanel {
     private int circleSize;
     private int xPos;
