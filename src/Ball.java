@@ -100,7 +100,9 @@ public class Ball {
 
     public void bounceButCool(Arena arena, ArrayList<Ball> ballsArray) {
         //check positions of other balls
+        for (Ball ball : ballsArray) {
 
+        }
 
         //System.out.println(x-size + " >= " + arena.getWidth());
         if (x-size >= arena.getWidth()) {
