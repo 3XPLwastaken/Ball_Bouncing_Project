@@ -2,20 +2,26 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Ball {
-    private int x;
-    private int y;
-    private int xSpeed;
-    private int ySpeed;
-    private int size;
+    private double x;
+    private double y;
+    private double mX;
+    private double mY;
+
+    private double xSpeed;
+    private double ySpeed;
+    private double size;
     private Color color;
 
-    public Ball(int x, int y, int xSpeed, int ySpeed, int size, Color color) {
+    public Ball(int x, int y, double xSpeed, double ySpeed, int size, Color color) {
         this.x = x;
         this.y = y;
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
         this.size = size;
         this.color = color;
+
+        mX = x + (double) size /2;
+        mY = y + (double) size /2;
     }
 
     public Color getColor() {
@@ -23,15 +29,16 @@ public class Ball {
     }
 
     public int getX() {
-        return x;
+        return (int) x;
     }
 
     public int getY() {
-        return y;
+        return (int) y;
     }
 
     public void setX(int x) {
         this.x = x;
+        mX = x + (int)(size/2);
     }
 
     public void setColor(Color color) {
@@ -52,29 +59,32 @@ public class Ball {
 
     public void setY(int y) {
         this.y = y;
+        mY = y + (int)(size/2);
     }
 
-    public int getSize() {
+    public double getSize() {
         return size;
     }
 
-    public int getxSpeed() {
+    public double getxSpeed() {
         return xSpeed;
     }
 
-    public int getySpeed() {
+    public double getySpeed() {
         return ySpeed;
     }
 
     public void render(Graphics g) {
         g.setColor(color);
-        g.fillOval(x, y, size, size);
+        g.fillOval((int)x, (int)y, (int)size, (int)size);
     }
 
     public void step() {
         x += xSpeed;
         y += ySpeed;
 
+        mX = x + (int)(size/2);
+        mY = y + (int)(size/2);
         //ySpeed += 1; // gravity
     }
 
@@ -90,9 +100,10 @@ public class Ball {
         }
     }
 
+    // the distance will be calulated from the middle of the ball here
     public double magnitude(Ball ball1, Ball ball2) {
-        int x = Math.abs(ball1.x - ball2.x);
-        int y = Math.abs(ball1.y - ball2.y);
+        int x = (int)Math.abs(ball1.mX - ball2.mX);
+        int y = (int)Math.abs(ball1.mY - ball2.mY);
 
         //
         return Math.sqrt((x^2) - (y^2));
@@ -101,7 +112,16 @@ public class Ball {
     public void bounceButCool(Arena arena, ArrayList<Ball> ballsArray) {
         //check positions of other balls
         for (Ball ball : ballsArray) {
+            if (ball == this) {
+                continue;
+            }
 
+            // divide the size in half for accurate checking
+            System.out.println(magnitude(this, ball));
+            if (magnitude(this, ball) >= (double) size /2) {
+                xSpeed = 0;
+                ySpeed = 0;
+            }
         }
 
         //System.out.println(x-size + " >= " + arena.getWidth());
