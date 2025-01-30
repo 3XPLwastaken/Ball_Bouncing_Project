@@ -15,7 +15,7 @@ public class Arena extends JPanel {
         circleSize = 60;
 
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 20; i++) {
             manager.addBall();
         }
     }
@@ -24,13 +24,13 @@ public class Arena extends JPanel {
     public void paintComponent(Graphics g) {
         manager.step(g);
 
-        xPos += 1;
+        /*xPos += 1;
         g.setColor(new Color(255,0,0));
         g.fillOval(xPos, yPos, circleSize, circleSize);
 
         g.drawRect(20, 20, 30, 30);
 
-        //System.in.wait(1000);
+        //System.in.wait(1000);*/
         try {
             Thread.sleep(1);
         } catch (InterruptedException e) {
