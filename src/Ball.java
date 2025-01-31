@@ -35,12 +35,20 @@ public class Ball {
         return color;
     }
 
-    public int getX() {
-        return (int) x;
+    public double getX() {
+        return x;
     }
 
-    public int getY() {
-        return (int) y;
+    public double getY() {
+        return y;
+    }
+
+    public double getMx() {
+        return mX;
+    }
+
+    public double getMy() {
+        return mY;
     }
 
     public void setX(int x) {
@@ -116,19 +124,8 @@ public class Ball {
 
     // the distance will be calulated from the middle of the ball here
     public double magnitude(Ball ball1, Ball ball2) {
-        double x = Math.abs(ball1.mX - ball2.mX);
-        double y = Math.abs(ball1.mY - ball2.mY);
-
-        //System.out.println(Math.sqrt((x^2) + (y^2)));
-        //System.out.println(y);
-
-        //
-        return Math.sqrt((Math.pow(x, 2)) + Math.pow(y, 2));
-    }
-
-    public double magnitudeT(int x1, int y1, int x2, int y2) {
-        double x = (int)Math.abs(x1 - x2);
-        double y = (int)Math.abs(y1 - y2);
+        double x = Math.abs(ball1.getMx() - ball2.getMx());
+        double y = Math.abs(ball1.getMy() - ball2.getMy());
 
         //System.out.println(Math.sqrt((x^2) + (y^2)));
         //System.out.println(y);
@@ -138,10 +135,11 @@ public class Ball {
     }
 
     public void bounceLogic(Ball ball, Ball ball2, boolean overwrite) {
-        if (magnitude(this, ball2) <= size/1.5 || overwrite) {
+        // fix for balls of different sizes going inside eachother
+        if (magnitude(this, ball2) <= (size+ball2.size)/2 || overwrite) {
             // distance between balls center points
-            double cX = (ball2.mX - ball.mX);
-            double cY = (ball2.mY - ball.mY);
+            double cX = (ball2.getMx() - ball.getMx());
+            double cY = (ball2.getMy() - ball.getMy());
 
 
             double divisor = Math.max(Math.abs(cX), Math.abs(cY));
