@@ -144,7 +144,7 @@ public class Ball {
 
             double divisor = Math.max(Math.abs(cX), Math.abs(cY));
 
-            System.out.println(cX + "/" + divisor);
+            //System.out.println(cX + "/" + divisor);
 
 
             // posiitions the balls far enough from eachother so they wont continue to bounce off eachother
