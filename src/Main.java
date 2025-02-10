@@ -6,7 +6,8 @@ import java.awt.*;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         JFrame frame = new JFrame("anim");
-        Arena arena = new Arena();
+        Arena arena = new
+                Arena(frame);
 
 
         frame.setSize(400, 400);

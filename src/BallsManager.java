@@ -17,18 +17,41 @@ public class BallsManager {
     }
 
     public void addBall() {
+        int x = (int)(Math.random()*2000);
+        int y = (int)(Math.random()*2000);
+
+        balls.add(new Ball(x, y, Math.random(), Math.random(), 10,
+                randomColor()
+        ));
+
+        /*balls.add(new Ball(x, y, Math.random(), Math.random(), (int)(Math.random()*50),
+                randomColor()
+        ));*/
+    }
+
+    public ArrayList<Ball> getBalls() {
+        return balls;
+    }
+
+    public Ball addBall2() {
         int x = (int)(Math.random()*200);
         int y = (int)(Math.random()*200);
 
-        balls.add(new Ball(x, y, Math.random(), Math.random(), (int)(Math.random()*50),
+        balls.add(new Ball(x, y, 3, 3, 10,
                 randomColor()
         ));
+
+        /*balls.add(new Ball(x, y, Math.random(), Math.random(), (int)(Math.random()*50),
+                randomColor()
+        ));*/
+
+        return balls.getLast();
     }
 
-    public void step(Graphics g) {
+    public void step(Graphics g, double dt) {
         for (Ball ball : balls) {
             ball.bounceButCool(arena, balls);
-            ball.step();
+            ball.step(dt);
             ball.render(g);
         }
     }

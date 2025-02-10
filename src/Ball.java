@@ -64,11 +64,11 @@ public class Ball {
         this.size = size;
     }
 
-    public void setxSpeed(int xSpeed) {
+    public void setxSpeed(double xSpeed) {
         this.xSpeed = xSpeed;
     }
 
-    public void setySpeed(int ySpeed) {
+    public void setySpeed(double ySpeed) {
         this.ySpeed = ySpeed;
     }
 
@@ -89,6 +89,16 @@ public class Ball {
         return ySpeed;
     }
 
+    public void addX(int x) {
+        this.x += x;
+        mX = this.x + (int)(size/2);
+    }
+
+    public void addY(int y) {
+        this.y += y;
+        mY = this.y + (int)(size/2);
+    }
+
     public void render(Graphics g) {
         g.setColor(color);
         g.fillOval((int)x, (int)y, (int)size, (int)size);
@@ -101,13 +111,19 @@ public class Ball {
         }
     }
 
-    public void step() {
+    public void step(double dt) {
+        double scale = dt*60;
+
+        ySpeed += 0.005;
+
         x += xSpeed;
         y += ySpeed;
 
         mX = x + (int)(size/2);
         mY = y + (int)(size/2);
-        //ySpeed += 1; // gravity
+
+
+        //ySpeed += Math.sin(System.nanoTime()/10.0)/10; // gravity
     }
 
     public void bounce(Arena arena, ArrayList<Ball> ballsArray) {
@@ -135,47 +151,48 @@ public class Ball {
     }
 
     public void bounceLogic(Ball ball, Ball ball2, boolean overwrite) {
-        // fix for balls of different sizes going inside eachother
-        if (magnitude(this, ball2) <= (size+ball2.size)/2 || overwrite) {
-            // distance between balls center points
-            double cX = (ball2.getMx() - ball.getMx());
-            double cY = (ball2.getMy() - ball.getMy());
+        double dx = ball2.getMx() - ball.getMx();
+        double dy = ball2.getMy() - ball.getMy();
+        double distance = Math.sqrt(dx * dx + dy * dy);
 
+        if (distance <= (ball.size + ball2.size) / 2 || overwrite) {
+            double nx = dx / distance;  // Normal vector
+            double ny = dy / distance;
 
-            double divisor = Math.max(Math.abs(cX), Math.abs(cY));
+            // Compute relative velocity
+            double vx = ball.xSpeed - ball2.xSpeed;
+            double vy = ball.ySpeed - ball2.ySpeed;
 
-            //System.out.println(cX + "/" + divisor);
+            // Compute dot product
+            double dotProduct = vx * nx + vy * ny;
 
-
-            // posiitions the balls far enough from eachother so they wont continue to bounce off eachother
-            x -= cX/magnitude(ball, ball2);
-            y -= cY/magnitude(ball, ball2);
-
-            //check if the number is NAN and tell the code to ignore the issue
-
-
-            xSpeed = cX/divisor * originalXSpeed;
-            ySpeed = cY/divisor * originalYSpeed;
-
-            if (cX < 0 && xSpeed < 0) {
-                xSpeed *= -1;
-            } else if (cX > 0 && xSpeed > 0) {
-                xSpeed *= -1;
+            // Only continue if balls are moving toward each other
+            if (dotProduct < 0) {
+                return;
             }
 
-            if (cY < 0 && ySpeed < 0) {
-                ySpeed *= -1;
-            } else if (cY > 0 && ySpeed > 0) {
-                ySpeed *= -1;
-            }
+            // Compute coefficient of restitution (elastic collisions)
+            double restitution = 0.8;//0.8; // Between 0 (inelastic) and 1 (perfectly elastic)
 
-            // call on other ball if this ball was not manually called
-            // bug fix to ensure both balls will calculate the bounce rather than 1 ball being
-            // effected
+            // Compute impulse scalar
+            double impulse = (1 + restitution) * dotProduct / 2;
+
+            // Apply impulse to change velocities
+            ball.xSpeed -= impulse * nx;
+            ball.ySpeed -= impulse * ny;
+            ball2.xSpeed += impulse * nx;
+            ball2.ySpeed += impulse * ny;
+
+            // Ensure balls don't overlap by pushing them apart
+            double overlap = (ball.size + ball2.size) / 2 - distance;
+            ball.x -= overlap * nx / 2;
+            ball.y -= overlap * ny / 2;
+            ball2.x += overlap * nx / 2;
+            ball2.y += overlap * ny / 2;
+
             if (!overwrite) {
                 ball2.bounceLogic(ball2, ball, true);
             }
-
         }
     }
 
@@ -193,18 +210,18 @@ public class Ball {
         //System.out.println(x-size + " >= " + arena.getWidth());
         if (x+size >= arena.getWidth()) {
             x = arena.getWidth()-size;
-            xSpeed *= -1;
+            xSpeed *= -0.6;
         } else if (x <= 0) {
             x = 0;
-            xSpeed *= -1;
+            xSpeed *= -0.6;
         }
 
         if (y+size >= arena.getHeight()) {
             y = arena.getHeight()-size;
-            ySpeed *= -1;
+            ySpeed *= -0.6;
         } else if (y <= 0) {
             y = 0;
-            ySpeed *= -1;
+            ySpeed *= -0.6;
             //ySpeed /= 2;
         }
     }
