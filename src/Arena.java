@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Date;
 
 public class Arena extends JPanel {
     private int circleSize;
@@ -14,12 +17,16 @@ public class Arena extends JPanel {
 
     private Ball mouseBall;
     private double lastTime = System.nanoTime();
-    private double dt = 0;
+    private long dt = 0;
+
+    public static double gravityOffsetY = 0.005;
+    public static double gravityOffsetX = 0;
+
 
     private double lastMouseX;
     private double lastMouseY;
 
-    private int xSpeed = 5; // Speed of JFrame movement
+    private double xSpeed = 5; // Speed of JFrame movement
     private double ySpeed = 5;
 
     public Arena(JFrame frame) {
@@ -27,6 +34,8 @@ public class Arena extends JPanel {
         xPos = 0;
         yPos = 0;
         circleSize = 60;
+
+        date = new Date();
 
         this.frame = frame;
         mouseBall = manager.addBall2();
@@ -42,25 +51,51 @@ public class Arena extends JPanel {
             manager.addBall();
         }
 
-        // Start moving the JFrame
+        setFocusable(true);
+        requestFocus();
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                double factor = 0.0025;
+
+                if (e.getKeyCode() == KeyEvent.VK_W) {
+                    gravityOffsetY -= factor;
+                } else if (e.getKeyCode() == KeyEvent.VK_S) {
+                    gravityOffsetY += factor;
+                } else if (e.getKeyCode() == KeyEvent.VK_A) {
+                    gravityOffsetX -= factor;
+                } else if (e.getKeyCode() == KeyEvent.VK_D) {
+                    gravityOffsetX += factor;
+                }
+
+                //System.out.println(e.getKeyCode());
+
+                //super.keyPressed(e);
+            }
+        });
+
+        // boing
         //startMovingFrame();
     }
+
+    private Date date;
 
     private void startMovingFrame() {
         Timer timer = new Timer(20, e -> {
             int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
             int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 
-            int newX = frame.getX() + xSpeed;
+            int newX = (int) (frame.getX() + xSpeed);
             int newY = (int) (frame.getY() + ySpeed);
 
-            // Bounce off screen edges
-            if (newX + frame.getWidth() >= screenWidth || newX <= 0) xSpeed *= -1;
-            if (newY + frame.getHeight() >= screenHeight || newY <= 0) ySpeed *= -1;
+            // bounce
+            if (newX + frame.getWidth() >= screenWidth || newX <= 0) xSpeed *= -0.75;
+            if (newY + frame.getHeight() >= screenHeight || newY <= 0) ySpeed *= -0.75;
 
             frame.setLocation(newX, newY);
 
-            //ySpeed += 0.3;
+            ySpeed += 0.3;
         });
 
         timer.start();
@@ -68,10 +103,34 @@ public class Arena extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        dt = System.nanoTime() - lastTime;
-        lastTime = System.nanoTime();
+        date = new Date();
+        dt = (long) (date.getTime() - lastTime);
+        lastTime = date.getTime();
+
+        int x = this.getHeight()/2 - 5 + (int)(gravityOffsetX/0.0025);
+        int y = this.getWidth()/2 - 5 + (int)(gravityOffsetY/0.0025);
+
+        if (x < 0) {
+            gravityOffsetX = this.getHeight() * 0.0025;
+        } else if (x > this.getWidth()) {
+            gravityOffsetX = 0;
+        }
+
+        if (y < 0) {
+            gravityOffsetY = this.getHeight() * 0.0025;
+        } else if (y > this.getHeight()) {
+            gravityOffsetY = 0;
+        }
+
+
+
+        //System.out.println(date.getTime());
 
         super.paintComponent(g);
+
+        g.setColor(new Color(255,255,255));
+        g.fillOval(x, y, 10, 10);
+
         manager.step(g, dt);
 
         if (super.getMousePosition() != null) {

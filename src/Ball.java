@@ -111,13 +111,15 @@ public class Ball {
         }
     }
 
-    public void step(double dt) {
-        double scale = dt*60;
+    public void step(long dt) {
+        long scale = 1; //dt/(long)(2.0);
 
-        ySpeed += 0.005;
 
-        x += xSpeed;
-        y += ySpeed;
+        ySpeed += Arena.gravityOffsetY*scale;
+        xSpeed += Arena.gravityOffsetX*scale;
+
+        x += xSpeed/scale;
+        y += ySpeed/scale;
 
         mX = x + (int)(size/2);
         mY = y + (int)(size/2);

@@ -48,7 +48,7 @@ public class BallsManager {
         return balls.getLast();
     }
 
-    public void step(Graphics g, double dt) {
+    public void step(Graphics g, long dt) {
         for (Ball ball : balls) {
             ball.bounceButCool(arena, balls);
             ball.step(dt);
